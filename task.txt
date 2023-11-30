@@ -1,0 +1,15 @@
+REST API - JSON format
+
+-> type of a hybrid API for both web and app
+
+    ~ GET /users - will return HTML document
+    ~ GET /api/users - will render for both web and app users
+
+        GET /api/users/1 - Get user ith ID 1
+        GET /api/users/2 - Get user ith ID 2
+
+        Dynamic path parameters
+        GET /api.users/:ID
+        :ID -> variable | dynamic it is
+
+JSON data generated from https://www.mockaroo.com/
