@@ -17,33 +17,39 @@ app.use((req, res, next) => {
   next();
 });
 
+// Helper function to find chapter by chID
+function findChapterByChID(chID) {
+  for (const chapter in users) {
+    if (users[chapter].chID == chID) {
+      return users[chapter];
+    }
+  }
+  return null;
+}
+
 // Routes
 
-app.get("/api/users", (req, res) => {
-  return res.json(users);
-});
-
-app.get("/api/users/:chapter", (req, res) => {
-  const chapterId = req.params.chapter;
-  const chapterData = users[chapterId];
+app.get("/api/users/:chID", (req, res) => {
+  const chapterId = req.params.chID;
+  const chapterData = findChapterByChID(chapterId);
 
   if (chapterData) {
-    return res.json({ [chapterId]: chapterData });
+    return res.json(chapterData);
   } else {
     return res.json({ error: "Chapter not found" });
   }
 });
 
-app.get("/api/users/:chapter/:id", (req, res) => {
-  const chapterId = req.params.chapter;
+app.get("/api/users/:chID/:id", (req, res) => {
+  const chapterId = req.params.chID;
   const userId = Number(req.params.id);
 
-  const chapterData = users[chapterId];
+  const chapterData = findChapterByChID(chapterId);
 
   if (chapterData) {
-    const userData = chapterData.find((user) => user.id === userId);
+    const userData = chapterData.users.find((user) => user.id === userId);
     if (userData) {
-      return res.json({ [chapterId]: [userData] });
+      return res.json(userData);
     } else {
       return res.json({ error: "User not found in the specified chapter" });
     }
