@@ -13,3 +13,13 @@ REST API - JSON format
         :ID -> variable | dynamic it is
 
 JSON data generated from https://www.mockaroo.com/
+
+some explanation
+
+This Node.js application uses the Express framework to create a server that provides access to user data stored in a JSON file. The server employs middleware to parse JSON in incoming requests and handle Cross-Origin Resource Sharing (CORS). The application incorporates an in-memory cache to optimize data retrieval. Two helper functions are defined to find a chapter by chapter ID and to find a user by ID across all chapters. The server defines three routes:
+
+/api/users: This route checks if an 'id' query parameter is provided. If so, it searches for the user with the specified ID across all chapters and returns the user data if found. If 'id' is not provided, it returns all users.
+
+/api/users/:chID: This route takes a chapter ID parameter (:chID) and returns user data specific to that chapter if the chapter is found; otherwise, it returns an error message.
+
+/api/users/:chID/:id: This route takes both chapter ID and user ID parameters (:chID and :id, respectively) and returns user data for the specified user in the specified chapter if both are found; otherwise, it returns an error message. The server logs a message indicating successful startup at the specified port.
