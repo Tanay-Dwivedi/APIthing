@@ -43,7 +43,7 @@ function findChapterByChID(chID) {
 // Define API routes
 
 // Route to get user data based on 'chID' and 'id' query parameters
-app.get("/api/users", (req, res) => {
+app.get("/", (req, res) => {
   const chID = req.query.chID;
   const id = req.query.id;
 
