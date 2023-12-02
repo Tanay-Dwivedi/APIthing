@@ -1,13 +1,15 @@
+// Import the Express framework and user data from a JSON file
 const express = require("express");
 const users = require("./userData.json");
 
+// Create an Express application and set the port
 const app = express();
 const PORT = 8000;
 
 // Middleware to parse JSON in requests
 app.use(express.json());
 
-// CORS handling - Adjust origin as needed
+// CORS handling - Allow all origins, headers, and methods
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
@@ -17,7 +19,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// In-memory cache
+// In-memory cache for optimized data retrieval
 const cache = {};
 
 // Helper function to find chapter by chID
@@ -38,68 +40,41 @@ function findChapterByChID(chID) {
   return null;
 }
 
-// Helper function to find user by ID across all chapters
-function findUserByID(userID) {
-  for (const chapter in users) {
-    const userData = users[chapter].users.find((user) => user.id === userID);
-    if (userData) {
-      return userData;
-    }
-  }
-  return null;
-}
+// Define API routes
 
-// Routes
-
+// Route to get user data based on 'chID' and 'id' query parameters
 app.get("/api/users", (req, res) => {
-  // Check if 'id' query parameter is provided
+  const chID = req.query.chID;
   const id = req.query.id;
 
-  if (id) {
-    // Search for the user with the specified ID across all chapters
-    const userData = findUserByID(Number(id));
+  if (chID) {
+    const chapterData = findChapterByChID(chID);
 
-    if (userData) {
-      return res.json(userData);
+    if (chapterData) {
+      if (id) {
+        // Return user with specified ID inside the specified chapter
+        const userData = chapterData.users.find(
+          (user) => user.id === Number(id)
+        );
+        if (userData) {
+          return res.json(userData);
+        } else {
+          return res.json({ error: "User not found in the specified chapter" });
+        }
+      } else {
+        // Return all users in the specified chapter
+        return res.json(chapterData);
+      }
     } else {
-      return res.json({ error: "User not found" });
+      return res.json({ error: "Chapter not found" });
     }
   } else {
-    // Return all users if 'id' query parameter is not provided
+    // Return all users if 'chID' query parameter is not provided
     return res.json(users);
   }
 });
 
-app.get("/api/users/:chID", (req, res) => {
-  const chapterId = req.params.chID;
-  const chapterData = findChapterByChID(chapterId);
-
-  if (chapterData) {
-    return res.json(chapterData);
-  } else {
-    return res.json({ error: "Chapter not found" });
-  }
-});
-
-app.get("/api/users/:chID/:id", (req, res) => {
-  const chapterId = req.params.chID;
-  const userId = Number(req.params.id);
-
-  const chapterData = findChapterByChID(chapterId);
-
-  if (chapterData) {
-    const userData = chapterData.users.find((user) => user.id === userId);
-    if (userData) {
-      return res.json(userData);
-    } else {
-      return res.json({ error: "User not found in the specified chapter" });
-    }
-  } else {
-    return res.json({ error: "Chapter not found" });
-  }
-});
-
-// Start the server
+// Start the server and log the port
 app.listen(PORT, () =>
   console.log(`Server running at http://localhost:${PORT}`)
 );
