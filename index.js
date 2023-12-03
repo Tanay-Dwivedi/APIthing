@@ -4,7 +4,7 @@ const users = require("./userData.json");
 
 // Create an Express application and set the port
 const app = express();
-const PORT = 8000;
+const PORT = process.env.PORT || 8000;
 
 // Middleware to parse JSON in requests
 app.use(express.json());
