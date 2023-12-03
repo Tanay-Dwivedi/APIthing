@@ -40,10 +40,8 @@ function findChapterByChID(chID) {
   return null;
 }
 
-// Define API routes
-
-// Route to get user data based on 'chID' and 'id' query parameters
-app.get("/", (req, res) => {
+// Define API route
+app.get("/api", (req, res) => {
   const chID = req.query.chID;
   const id = req.query.id;
 
@@ -72,6 +70,12 @@ app.get("/", (req, res) => {
     // Return all users if 'chID' query parameter is not provided
     return res.json(users);
   }
+});
+
+// Serve HTML file for the root path
+app.get("/", (req, res) => {
+  // You can customize this part based on your file structure
+  res.sendFile(__dirname + "/index.html");
 });
 
 // Start the server and log the port
