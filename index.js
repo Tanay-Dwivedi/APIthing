@@ -1,15 +1,13 @@
-// Import the Express framework and user data from a JSON file
 const express = require("express");
+const path = require("path");
 const users = require("./userData.json");
 
-// Create an Express application and set the port
 const app = express();
 const PORT = process.env.PORT || 8000;
 
-// Middleware to parse JSON in requests
 app.use(express.json());
 
-// CORS handling - Allow all origins, headers, and methods
+// CORS handling
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
@@ -19,29 +17,15 @@ app.use((req, res, next) => {
   next();
 });
 
-// In-memory cache for optimized data retrieval
-const cache = {};
-
-// Helper function to find chapter by chID
-function findChapterByChID(chID) {
-  if (cache[chID]) {
-    // Return cached data if available
-    return cache[chID];
-  }
-
-  for (const chapter in users) {
-    if (users[chapter].chID == chID) {
-      // Cache the fetched data
-      cache[chID] = users[chapter];
-      return cache[chID];
-    }
-  }
-
-  return null;
-}
+// Serve HTML file for the root path
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
 
 // Define API route
 app.get("/api", (req, res) => {
+  // Your existing API route logic
+  // ...
   const chID = req.query.chID;
   const id = req.query.id;
 
@@ -72,13 +56,6 @@ app.get("/api", (req, res) => {
   }
 });
 
-// Serve HTML file for the root path
-app.get("/", (req, res) => {
-  // You can customize this part based on your file structure
-  res.sendFile(__dirname + "/index.html");
-});
-
-// Start the server and log the port
 app.listen(PORT, () =>
   console.log(`Server running at http://localhost:${PORT}`)
 );
